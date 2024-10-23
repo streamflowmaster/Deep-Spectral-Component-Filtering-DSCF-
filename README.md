@@ -14,10 +14,14 @@ ComFilE: The file fold contains scripts and results for the Component Filtering 
 
 # Gallery of charming results during work
 ## Model architecture
+
+The model is a hierarchical local attention encoder-decoder transformer. The detail components of model are described in DSCF_model_pe.py.
+The following image is the general outline of the general pre-trained model.
 ![image](https://github.com/user-attachments/assets/56879799-315c-4138-8e49-f273dd2dbd28)
 
 
 ## Paraffin remove
+
 ![pt_data6-201521653-7removed_normed](https://github.com/user-attachments/assets/83a587d8-ffe6-4161-a3b2-97739ffad1c0)
 ![pt_data6-201521653-7paraffin_normed](https://github.com/user-attachments/assets/6b2a23ba-3fe7-401c-8976-edb3a0ef8824)
 ![pt_data6-201521653-7removed_normed](https://github.com/user-attachments/assets/fe199ffc-8bf0-4e99-aea0-49721de362e9)
