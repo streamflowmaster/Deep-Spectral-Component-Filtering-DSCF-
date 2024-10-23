@@ -12,7 +12,7 @@ quantify: The file fold contains scripts for quantification and spectral data to
 ComFilE: The file fold contains scripts and results for the Component Filtering Explanation. 
 
 
-# Gallery of implicit but charming results behind this work
+# Gallery of implicit results behind this work
 ## Model architecture
 
 DSCF model is a hierarchical local attention encoder-decoder transformer. The detailed components of the model are described in DSCF_model_pe.py.
