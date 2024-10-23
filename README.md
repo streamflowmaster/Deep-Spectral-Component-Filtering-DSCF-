@@ -3,4 +3,8 @@ Here is the code for pretraining the foundation model for spectral analysis, whi
 The code for detail downstream tasks is coming soon after the manuscript is formally published.
 
 # directory notation
-utils： the file fold contains general pretraining model weights and usage tools.
+utils： The file fold contains general pretraining model weights and usage tools.
+Preprocessing: The file fold contains scripts for preprocessing, source files, and results of infrared paraffin removal and SERS NPs removal.
+quantify: The file fold contains scripts for quantification and spectral data to be quantified.
+ComFilE: The file fold contains scripts and results for the Component Filtering Explanation. 
+
