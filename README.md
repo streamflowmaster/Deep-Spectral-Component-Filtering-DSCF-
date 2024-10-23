@@ -22,9 +22,10 @@ The following image is the general outline of the general pre-trained model.
 
 ## Paraffin remove
 
+![pt_data6-201521653-7hsi_normed](https://github.com/user-attachments/assets/2916b6f5-a878-4fa6-a882-488c586c9812)
 ![pt_data6-201521653-7removed_normed](https://github.com/user-attachments/assets/83a587d8-ffe6-4161-a3b2-97739ffad1c0)
 ![pt_data6-201521653-7paraffin_normed](https://github.com/user-attachments/assets/6b2a23ba-3fe7-401c-8976-edb3a0ef8824)
-![pt_data6-201521653-7removed_normed](https://github.com/user-attachments/assets/fe199ffc-8bf0-4e99-aea0-49721de362e9)
+
 
 
 
