@@ -12,7 +12,7 @@ quantify: The file fold contains scripts for quantification and spectral data to
 ComFilE: The file fold contains scripts and results for the Component Filtering Explanation. 
 
 
-# Gallery of charming results during work
+# Gallery of implicit but charming results behind work
 ## Model architecture
 
 DSCF model is a hierarchical local attention encoder-decoder transformer. The detailed components of the model are described in DSCF_model_pe.py.
@@ -20,7 +20,7 @@ The following image is the general outline of the general pre-trained model.
 ![image](https://github.com/user-attachments/assets/56879799-315c-4138-8e49-f273dd2dbd28)
 
 
-## Paraffin remove
+## Preprocessing
 
 Paraffin removal is a general routine in FFPE IR analysis. DSCF model can be tailored for paraffin removal. The following images are results of raw data, paraffin and paraffin-removed data.
 
