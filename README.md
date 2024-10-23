@@ -29,9 +29,9 @@ Paraffin removal is a general routine in FFPE IR analysis. DSCF model can be tai
 ![pt_data6-201521653-7paraffin_normed](https://github.com/user-attachments/assets/6b2a23ba-3fe7-401c-8976-edb3a0ef8824)
 
 
-
-
 ## Explaining for spectral marker
+
+Some of the in-silico explaining results are as follows, where highlighted components are ground truth.
 ![image](https://github.com/user-attachments/assets/7a398f74-1eed-49bc-80b4-c50d566ada8d)
 ![image](https://github.com/user-attachments/assets/78093c24-b4c8-4275-b423-b6cea85dacee)
 
