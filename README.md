@@ -17,7 +17,7 @@ ComFilE: The file fold contains scripts and results for the Component Filtering 
 
 DSCF model is a hierarchical local attention encoder-decoder transformer. The detailed components of the model are described in DSCF_model_pe.py.
 The following image is the general outline of the general pre-trained model.
-The pretrained weights of the tiny-version model is open source and can be downloaded at https://pan.baidu.com/s/1KemTI4yx2-6SwKzmSYyROQ?pwd=ira8.
+The pre-trained weights of the tiny-version model are open source and can be downloaded at https://pan.baidu.com/s/1KemTI4yx2-6SwKzmSYyROQ?pwd=ira8. The weights of larger models will also be open-source after publishing.
 ![image](https://github.com/user-attachments/assets/56879799-315c-4138-8e49-f273dd2dbd28)
 
 
