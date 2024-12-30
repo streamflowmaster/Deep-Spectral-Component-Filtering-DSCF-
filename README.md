@@ -37,3 +37,7 @@ Some of the in-silico explaining results are as follows, where highlighted compo
 ![image](https://github.com/user-attachments/assets/78093c24-b4c8-4275-b423-b6cea85dacee)
 
 The code for detailed downstream tasks is coming soon after the manuscript is formally published.
+
+2nd-order ComFilE. 
+![ComFilE_Extend](https://github.com/user-attachments/assets/549408f2-4294-43ab-8f0c-70fe98e3b76c)
+
