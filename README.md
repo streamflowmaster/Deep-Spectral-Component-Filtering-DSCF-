@@ -1,5 +1,5 @@
 Here is the code for pretraining the foundation model for spectral analysis, which is now under peer review so that the partial core source code can be uploaded to the project. 
-To remove the code barrier for the spectroscopy researchers, the codes were rewritten for quick start without using training framework but only torch. We also provide scripts for finetuning, users can follow the instructions in the script to load the data for your own tasks. 
+To remove the code barrier for the spectroscopy researchers, the codes were rewritten for quick start without using training framework but only torch. We also provided scripts for finetuning, users can follow the instructions in the script to load the data for your own tasks. 
 
 
 # Directory notation
