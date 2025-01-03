@@ -15,13 +15,19 @@ ComFilE: The file fold contains scripts and results for the Component Filtering 
 
 # quick start
 The scripts to build DSCF for your personalized work are in the directory "costumized_task". 
+
 To start with the scripts, you should follow the instructions in the 'dataset.py' to load your spectra into the corresponding file folds. 
+
     Fold 'Component-spec' is for the spectral dictionary of pure substances.
+    
     Fold 'Impurity-spec' is for unwanted spectral components to filter out from spectra
+    
     Fold 'Pure-spec' is for spectral components to be preserved. 
+    
 {'dir':'Pure-spec/',
        'tensor_dim':2,
        'spec_tensor_dim':-1,}
+       
 An attribution dictionary should be innit for each data fold. Tensor_dim is to describe the total dimension of one data file. Spec_tensor_dim is to describe the id of spectral dimension in the data file, ranging from (0,tensor_dim-1).
 
 The output mode can be customized by revising the 'return value' in the __gettitem__ function. 
