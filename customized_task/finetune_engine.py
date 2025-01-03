@@ -57,8 +57,8 @@ def print_metrics(metrics, epoch_samples, phase):
 def train_one_epoch(model,epoch,optimizer,metric,device,train_data):
     loss_sum = 0
     for idx,(inputs,target) in enumerate(train_data):
-        inputs = inputs.float().to(device).unsqueeze(1)
-        target = target.float().to(device).unsqueeze(1)
+        inputs = inputs.float().to(device)
+        target = target.float().to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
         # print('output:',outputs.shape,
@@ -66,12 +66,12 @@ def train_one_epoch(model,epoch,optimizer,metric,device,train_data):
         B,C,Lt = target.shape
         B,C,Lo = outputs.shape
         # print(Lt,Lo)
-        if Lt>Lo:
-            outputs = F.pad(outputs,(0,Lt-Lo))
-        elif Lt<Lo:
-            target = F.pad(target,(0,Lo-Lt))
-
+        if Lt!=Lo:
+            outputs = length_adopt(outputs,Lt)
+        # print('output:',outputs.shape,
+        #       'target:',target.shape)
         loss = calc_loss(outputs.squeeze(1),target.squeeze(1),metrics=metric)
+
         loss.backward()
         optimizer.step()
         loss_sum += loss.item()
