@@ -5,12 +5,44 @@ import torch.utils.data as tud
 import matplotlib.pyplot as plt
 import math
 from Interp import interp1d
+import numpy as np
 
+def random_time_warp(signal, max_warp=0.2):
+    """
+    Randomly time-warp a signal.
+
+    Parameters:
+    - signal: The input signal (1D numpy array).
+    - max_warp: Maximum warp factor (e.g., 0.1 for up to ±10% time warp).
+
+    Returns:
+    - warped_signal: The time-warped signal.
+    """
+
+    if len(signal.shape) > 1:
+        for idx in range(signal.shape[0]):
+            signal[idx] = random_time_warp(signal[idx],max_warp)
+        return signal
+    else:
+        n = signal.shape[-1]
+        device = signal.device
+        warp_factors = torch.linspace(1 - max_warp, 1 + max_warp, n)
+        warp_indices = torch.arange(n) * torch.from_numpy(np.random.choice(warp_factors, n))
+        warp_indices[warp_indices < 0 ] = torch.randint(0, n, (1,))
+        warp_indices[warp_indices >= n] = torch.randint(0, n, (1,))
+        warp_indices = torch.sort(warp_indices)[0].long()
+        warped_signal = signal[warp_indices] * torch.from_numpy(
+            np.random.uniform(1 - max_warp/2, 1 + max_warp/2, n)).to(device)
+
+        return warped_signal
 
 def length_adopt(signal,background):
     L = background.shape[-1]
     S = signal.shape[-1]
-    device = signal.device
+    device = 'cpu'
+    device = background.to(device)
+    signal = signal.to(device)
+
     # print(Lt,Lo)
     if L!=S:
         if len(signal.shape) == 3:
@@ -61,6 +93,7 @@ class Generation(tud.Dataset):
         self.device = device
         self.signal_len = spec_len
         self.snr = snr
+        self.example = torch.rand((1,self.signal_len)).to('cpu')
 
         self.Pures = self.load_spec(Pure)
         self.Impures = self.load_spec(Impure)
@@ -84,19 +117,22 @@ class Generation(tud.Dataset):
         Returns:
         - data: the data of the dir_list
         '''
-        if SPEC is None:
+        if SPEC is None or SPEC is {}:
             return torch.empty((0,self.signal_len))
 
         else:
             dir_list = os.listdir(SPEC['dir'])
             tensor_dim = SPEC['tensor_dim']
             spec_tensor_dim = SPEC['spec_tensor_dim']
+            if spec_tensor_dim < 0:
+                spec_tensor_dim = tensor_dim + spec_tensor_dim
 
             #try to load the first data to get the shape of the data
             data = torch.load(os.path.join(SPEC['dir'],dir_list[0]))
-            assert len(data.shape) == tensor_dim, 'The tensor_dim is not correct'
-            assert spec_tensor_dim < tensor_dim, 'The spec_tensor_dim is not correct'
+            assert len(data.shape) == tensor_dim, 'The tensor_dim of ' + SPEC['dir'] +' is not correct'
+            assert spec_tensor_dim < tensor_dim, 'The spec_tensor_dim  of ' + SPEC['dir'] +' is not correct'
             # permute the spec_tensor_dim to the last dim
+            print([i for i in range(tensor_dim) if i!=spec_tensor_dim]+[spec_tensor_dim])
             data = data.permute(*[i for i in range(tensor_dim) if i!=spec_tensor_dim]+[spec_tensor_dim])
             # reshape the data to the shape of (N,C,L)
             data = data.reshape(-1,data.shape[-1])
@@ -110,15 +146,18 @@ class Generation(tud.Dataset):
                 total_spec_num += data.shape[0]
 
             # load the data
-            data = torch.zeros((total_spec_num,data.shape[-1]))
+            data = torch.zeros((total_spec_num,self.signal_len))
             dim = 0
             for idx in range(len(dir_list)):
                 data_ = torch.load(os.path.join(SPEC['dir'],dir_list[idx]))
                 data_ = data_.permute(*[i for i in range(tensor_dim) if i!=spec_tensor_dim]+[spec_tensor_dim])
                 data_ = data_.reshape(-1,data_.shape[-1])
+                # align the length of the signal
+                data_ = length_adopt(data_,self.example)
                 data[dim:dim+data_.shape[0],:] = self.max_min_norm(data_)
                 dim += data_.shape[0]
-
+        print('Number of the ',SPEC['dir'],' is ',data.shape[0])
+        data = data.to(self.device)
         return data
 
     def load_dictionary(self,Component:dict={'dir':'Component-spec/',
@@ -132,18 +171,20 @@ class Generation(tud.Dataset):
         N is the different observation of the same component
         L is the length of the signal
         '''
-        if Component is None:
+        if Component is None or Component is {}:
             return torch.empty((0,0,self.signal_len))
 
         else:
             dir_list = os.listdir(Component['dir'])
             tensor_dim = Component['tensor_dim']
             spec_tensor_dim = Component['spec_tensor_dim']
+            if spec_tensor_dim < 0:
+                spec_tensor_dim = tensor_dim + spec_tensor_dim
 
             #try to load the first data to get the shape of the data
             data = torch.load(os.path.join(Component['dir'],dir_list[0]))
-            assert len(data.shape) == tensor_dim, 'The tensor_dim is not correct'
-            assert spec_tensor_dim < tensor_dim, 'The spec_tensor_dim is not correct'
+            assert len(data.shape) == tensor_dim, 'The tensor_dim of ' + Component['dir'] +' is not correct'
+            assert spec_tensor_dim < tensor_dim, 'The spec_tensor_dim of ' + Component['dir'] +' is not correct'
 
 
             total_spec_num = 0
@@ -159,15 +200,17 @@ class Generation(tud.Dataset):
                 max_observation = max(max_observation,data.shape[0])
 
             # load the data
-            data = torch.zeros((total_spec_num,max_observation,data.shape[-1]))
+            data = torch.zeros((total_spec_num,max_observation,self.signal_len))
             dim = 0
             for idx in range(len(dir_list)):
                 data_ = torch.load(os.path.join(Component['dir'],dir_list[idx]))
                 data_ = data_.permute(*[i for i in range(tensor_dim) if i != spec_tensor_dim] + [spec_tensor_dim])
                 data_ = data_.reshape(-1, data_.shape[-1])
+                data_ = length_adopt(data_, self.example)
                 data[dim,0:data_.shape[0],:] = self.max_min_norm(data_)
                 dim += 1
-
+            print('Number of the ',Component['dir'],' is ',data.shape[0])
+            data = data.to(self.device)
             return data
 
     def __len__(self):
@@ -180,12 +223,12 @@ class Generation(tud.Dataset):
         if len(spec.shape) == 1:
             max_ = spec.max(0)[0]
             min_ = spec.min(0)[0]
-            spec = (spec-min_)/(max_-min_)
+            spec = (spec-min_)/(max_-min_+1e-8)
             # print(spec.shape)
         if len(spec.shape) == 2:
             max_ = spec.max(1)[0].unsqueeze(1)
             min_ = spec.min(1)[0].unsqueeze(1)
-            spec = (spec-min_)/(max_-min_)
+            spec = (spec-min_)/(max_-min_+1e-8)
         return spec
 
 
@@ -204,40 +247,34 @@ class Generation(tud.Dataset):
             component = self.Components[component_idx[idx],:,:]
             component = component[torch.randint(0,component.shape[0],(1,))[0],:]
             mixture += component_abudance[idx]*self.signal_warp(component)
-        return self.max_min_norm(mixture)
+        return self.max_min_norm(mixture)[None]
 
 
     def get_pure(self):
         assert self.Pures.shape[0]>0, 'The pure data is empty'
-        pure_idx = torch.randint(0,self.Pures.shape[0],(1,))
+        pure_idx = torch.randint(0,self.Pures.shape[0]-1,(1,))
         return self.signal_warp(self.Pures[pure_idx,:])
 
     def signal_warp(self,signal):
         # random warp the signal
         prob = random.uniform(0,1)
         if prob<=self.warp_prob:
-            warp_factor = random.uniform(0,0.2)
-            signal = signal.unsqueeze(0)
-            signal = signal.permute(0,2,1)
-            signal = signal.reshape(-1,signal.shape[-1])
-            signal = interp1d(torch.linspace(0,1,signal.shape[-1]).to(self.device),signal,torch.linspace(0,1,signal.shape[-1]).to(self.device))
-            signal = signal.reshape(1,self.signal_len)
-            return signal
+            return random_time_warp(signal, self.warp_factor)
         else:
             return signal
 
     def get_Impure(self):
         assert self.Impures.shape[0]>0, 'The impure data is empty'
-        impure_idx = torch.randint(0,self.Impures.shape[0],(1,))
-        return self.signal_warp(self.Impures[impure_idx,:])
+        impure_idx = torch.randint(0,self.Impures.shape[0]-1,(1,))
+        impure = self.signal_warp(self.Impures[impure_idx,:])
+        return impure
 
     def add_noise(self,snr,signal):
         if snr is None:
             return torch.zeros(signal.shape).to(self.device)
         else:
             noise = torch.randn(signal.shape).to(self.device)
-            noise = noise - noise.mean()
-            signal_power = signal.pow(2).mean()
+            signal_power = signal.pow(2).mean()+1e-8
             noise_variance = signal_power / (10 ** (snr / 10))
             noise = noise * (noise_variance ** 0.5)
             return noise
@@ -246,46 +283,53 @@ class Generation(tud.Dataset):
         pure = self.get_pure()
         impure = self.get_Impure()
         mixture = self.get_mixture()
-        noise = self.add_noise(self.snr,mixture+pure+impure)
-        signal = pure + impure + noise + mixture
-        return signal,impure
+        # radom weight the signal
+        weight = torch.rand(3)
+        signal = weight[0]*pure + weight[1]*impure + weight[2]*mixture
+        signal = self.max_min_norm(signal)
+        noise = self.add_noise(self.snr,signal)
+        signal_n = pure + impure + mixture + noise
+        # switch the second return value (signal, impure, pure)
+        # for the customized task
+        return signal_n,impure
 
 
 def main():
-    dataset = Generation(snr=15,
+    dataset = Generation(snr=25,
                          Pure={'dir':'Pure-spec/',
-                               'tensor_dim':3,
-                               'spec_tensor_dim':3,},
+                               'tensor_dim':2,
+                               'spec_tensor_dim':-1,},
                          Impure={'dir':'Impure-spec/',
-                                    'tensor_dim':3,
-                                    'spec_tensor_dim':3,},
+                                    'tensor_dim':2,
+                                    'spec_tensor_dim':-1,},
                          Component={'dir':'Component-spec/',
-                                        'tensor_dim':3,
-                                        'spec_tensor_dim':3,},
+                                        'tensor_dim':2,
+                                        'spec_tensor_dim':-1,},
                          mix_protocol={'max_num_of_component':3,
                                         'min_num_of_component':1,
                                       'abudance_distribution':None,},
                          spec_len=512,
                          warp_factor=0.1,
                          warp_prob=0.5,
+                         device='cpu',
                          )
     signal,impure = dataset[0]
     print(signal.shape,impure.shape)
-    plt.plot(signal.cpu().numpy())
-    plt.plot(impure.cpu().numpy())
+    plt.plot(signal.cpu().numpy()[0])
+    plt.plot(impure.cpu().numpy()[0])
     plt.show()
 
 def fintuning_dataloader(batch_size=1,device='cuda:1',snr=15):
     dataset = Generation(snr=snr,
                          Pure={'dir':'Pure-spec/',
-                               'tensor_dim':3,
-                               'spec_tensor_dim':3,},
+                               'tensor_dim':2,
+                               'spec_tensor_dim':-1,},
                          Impure={'dir':'Impure-spec/',
-                                    'tensor_dim':3,
-                                    'spec_tensor_dim':3,},
+                                    'tensor_dim':2,
+                                    'spec_tensor_dim':-1,},
                          Component={'dir':'Component-spec/',
-                                        'tensor_dim':3,
-                                        'spec_tensor_dim':3,},
+                                        'tensor_dim':2,
+                                        'spec_tensor_dim':-1,},
                          mix_protocol={'max_num_of_component':3,
                                         'min_num_of_component':1,
                                       'abudance_distribution':None,},
@@ -295,3 +339,6 @@ def fintuning_dataloader(batch_size=1,device='cuda:1',snr=15):
                          device=device,
                          )
     return tud.DataLoader(dataset,batch_size=batch_size,shuffle=True)
+
+if __name__ == '__main__':
+    main()
