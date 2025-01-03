@@ -1,0 +1,17 @@
+logic:
+    AND
+Var_Num:
+    3
+thres_0:
+    0.22
+thres_1:
+    0.22
+thres_2:
+    0.22
+
+idx_0:
+    1
+idx_1:
+    15
+idx_2:
+    28
