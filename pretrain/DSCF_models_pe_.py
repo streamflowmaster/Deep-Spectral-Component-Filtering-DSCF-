@@ -1,7 +1,3 @@
-#
-import torch.nn as nn
-import torch
-import math
 from typing import List
 from dataclasses import dataclass
 import numpy as np
@@ -1191,36 +1187,6 @@ class MultiDec_1d_model(nn.Module):
         down4 = self.enc4(down3).reshape(B,-1)
         return self.fc1(down4)
 
-    def decode_ir(self,down):
-        down4,down3,down2,down1 = down
-        up3 = self.Dec_ir[0](down4, down3)
-        up2 = self.Dec_ir[1](up3, down2)
-        up1 = self.Dec_ir[2](up2, down1)
-        if self.decoder_name in ['PatchPixelShuffle', 'PPS']:
-            up1 = up1.permute(0,2,1)
-        up0 = self.Dec_ir[3](up1)
-        return up0
-
-    def decode_raman(self,down):
-        down4,down3,down2,down1 = down
-        up3 = self.Dec_raman[0](down4, down3)
-        up2 = self.Dec_raman[1](up3, down2)
-        up1 = self.Dec_raman[2](up2, down1)
-        if self.decoder_name in ['PatchPixelShuffle', 'PPS']:
-            up1 = up1.permute(0,2,1)
-        up0 = self.Dec_raman[3](up1)
-        return up0
-
-    def decode_sers(self,down):
-        down4,down3,down2,down1 = down
-        up3 = self.Dec_sers[0](down4, down3)
-        up2 = self.Dec_sers[1](up3, down2)
-        up1 = self.Dec_sers[2](up2, down1)
-        if self.decoder_name in ['PatchPixelShuffle', 'PPS']:
-            up1 = up1.permute(0,2,1)
-        up0 = self.Dec_sers[3](up1)
-        return up0
-
     def decode(self,down,types=None):
         down4,down3,down2,down1 = down
         up3 = self.Dec_ir[0](down4, down3)
@@ -1312,72 +1278,6 @@ class MultiDec_1d_model(nn.Module):
                     to_load_dict[state] = state_dict[prefix+state]
             encs_dict.append(to_load_dict)
         return encs_dict
-
-    def forward_ir(self,x):
-        # x, x_max = self.batchwise_norm(x)
-        if self.encoder_name == 'SiT':
-            x = self.patch_embed(x)  # B,1,L -> B,E,N
-            if self.mask:
-                mask = self.random_masking(x, mask_ratio=self.mask)
-                x = self.mask_operation(x, mask)
-        down1 = self.enc1(x)
-        down2 = self.enc2(down1)
-        down3 = self.enc3(down2)
-        down4 = self.enc4(down3)
-        down = (down4, down3, down2, down1)
-
-        up0 = self.decode_ir(down)
-        up = self.dec0(up0)
-        if self.encoder_name == 'SiT':
-            up = self.unpatchy(up)
-        # up = self.batchwise_norm_back(up,x_max)
-        up = self.linear_upsample(up)
-        up = torch.nn.functional.relu(up)
-        return up
-
-    def forward_sers(self,x):
-        # x, x_max = self.batchwise_norm(x)
-        if self.encoder_name == 'SiT':
-            x = self.patch_embed(x)  # B,1,L -> B,E,N
-            if self.mask:
-                mask = self.random_masking(x, mask_ratio=self.mask)
-                x = self.mask_operation(x, mask)
-        down1 = self.enc1(x)
-        down2 = self.enc2(down1)
-        down3 = self.enc3(down2)
-        down4 = self.enc4(down3)
-        down = (down4, down3, down2, down1)
-
-        up0 = self.decode_sers(down)
-        up = self.dec0(up0)
-        if self.encoder_name == 'SiT':
-            up = self.unpatchy(up)
-        # up = self.batchwise_norm_back(up,x_max)
-        up = self.linear_upsample(up)
-        up = torch.nn.functional.relu(up)
-        return up
-
-    def forward_raman(self,x):
-        # x, x_max = self.batchwise_norm(x)
-        if self.encoder_name == 'SiT':
-            x = self.patch_embed(x)  # B,1,L -> B,E,N
-            if self.mask:
-                mask = self.random_masking(x, mask_ratio=self.mask)
-                x = self.mask_operation(x, mask)
-        down1 = self.enc1(x)
-        down2 = self.enc2(down1)
-        down3 = self.enc3(down2)
-        down4 = self.enc4(down3)
-        down = (down4, down3, down2, down1)
-
-        up0 = self.decode_(down)
-        up = self.dec0(up0)
-        if self.encoder_name == 'SiT':
-            up = self.unpatchy(up)
-        # up = self.batchwise_norm_back(up,x_max)
-        up = self.linear_upsample(up)
-        up = torch.nn.functional.relu(up)
-        return up
 
 
 
