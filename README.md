@@ -13,7 +13,7 @@ quantify: The file fold contains scripts for quantification and spectral data to
 
 ComFilE: The file fold contains scripts and results for the Component Filtering Explanation. 
 
-# quick start
+# Quick start
 The scripts to build DSCF for your personalized work are in the directory "costumized_task". 
 
 To start with the scripts, you should follow the instructions in the 'dataset.py' to load your spectra into the corresponding file folds. 
