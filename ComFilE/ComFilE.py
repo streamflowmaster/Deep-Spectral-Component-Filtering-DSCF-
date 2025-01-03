@@ -1,14 +1,14 @@
 import os
 import torch
 import pickle
-from ComponentFiltering.COMFILE.train_filtered_cls_models import train as train_cls
-from ComponentFiltering.COMFILE.eva_cls_models import eva as eva_cls
-from ComponentFiltering.utils.train_models import train as train_filter
-from ComponentFiltering.utils.DSCF_models_ import Hierarchical_1d_model as filter
-from ComponentFiltering.COMFILE.cls_models import Hierarchical_1d_cls_model as cls
-from ComponentFiltering.COMFILE.cls_ml_models import fetch_ml_model
-from ComponentFiltering.COMFILE.dataset_ml import load_data
-from ComponentFiltering.COMFILE.eval_cls_ml_models import eva as eva_ml_cls
+from COMFILE.train_filtered_cls_models import train as train_cls
+from COMFILE.eva_cls_models import eva as eva_cls
+from utils.train_models import train as train_filter
+from utils.DSCF_models_ import Hierarchical_1d_model as filter
+from COMFILE.cls_models import Hierarchical_1d_cls_model as cls
+from COMFILE.cls_ml_models import fetch_ml_model
+from COMFILE.dataset_ml import load_data
+from COMFILE.eval_cls_ml_models import eva as eva_ml_cls
 def robust_fold(fold):
     if not os.path.exists(fold):
         os.makedirs(fold)
