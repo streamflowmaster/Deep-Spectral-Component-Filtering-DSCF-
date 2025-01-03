@@ -13,13 +13,25 @@ quantify: The file fold contains scripts for quantification and spectral data to
 
 ComFilE: The file fold contains scripts and results for the Component Filtering Explanation. 
 
+# quick start
+The scripts to build DSCF for your personalized work are in the directory "costumized_task". 
+To start with the scripts, you should follow the instructions in the 'dataset.py' to load your spectra into the corresponding file folds. 
+    Fold 'Component-spec' is for the spectral dictionary of pure substances.
+    Fold 'Impurity-spec' is for unwanted spectral components to filter out from spectra
+    Fold 'Pure-spec' is for spectral components to be preserved. 
+{'dir':'Pure-spec/',
+       'tensor_dim':2,
+       'spec_tensor_dim':-1,}
+An attribution dictionary should be innit for each data fold. Tensor_dim is to describe the total dimension of one data file. Spec_tensor_dim is to describe the id of spectral dimension in the data file, ranging from (0,tensor_dim-1).
+
+The output mode can be customized by revising the 'return value' in the __gettitem__ function. 
 
 # Gallery of implicit results behind this work
 ## Model architecture
 
 DSCF model is a hierarchical local attention encoder-decoder transformer. The detailed components of the model are described in DSCF_model_pe.py.
 The following image is the general outline of the general pre-trained model.
-The pre-trained weights of the tiny-version model are open source and can be downloaded at https://pan.baidu.com/s/1KemTI4yx2-6SwKzmSYyROQ?pwd=ira8. The weights of larger models will also be open-source after publishing.
+The pre-trained weights of the tiny-version model are available and can be downloaded at https://pan.baidu.com/s/1KemTI4yx2-6SwKzmSYyROQ?pwd=ira8. The weights of larger models will also be open-source after publishing.
 ![image](https://github.com/user-attachments/assets/56879799-315c-4138-8e49-f273dd2dbd28)
 
 
