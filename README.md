@@ -37,7 +37,7 @@ The output mode can be customized by revising the 'return value' in the __gettit
 
 DSCF model is a hierarchical local attention encoder-decoder transformer. The detailed components of the model are described in DSCF_model_pe.py.
 The following image is the general outline of the general pre-trained model.
-The pre-trained weights of the tiny-version model are available and can be downloaded at https://pan.baidu.com/s/1KemTI4yx2-6SwKzmSYyROQ?pwd=ira8. The weights of larger models will also be open-source after publishing.
+The pre-trained weights of the tiny-version model are available and can be downloaded at https://figshare.com/s/2b31ca642313086dcfe6. The weights of larger models will also be open-source after publishing.
 ![image](https://github.com/user-attachments/assets/56879799-315c-4138-8e49-f273dd2dbd28)
 
 
