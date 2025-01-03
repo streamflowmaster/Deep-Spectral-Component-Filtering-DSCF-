@@ -1,8 +1,18 @@
 import os
 import torch
 import pickle
-from DSCF_Submit.ComFilE.COMFILE import *
-from ComFilE_Extended.eval_cls_ml_models import eva as eva_ml_cls
+import os
+import torch
+import pickle
+from train_filtered_cls_models import train as train_cls
+from eva_cls_models import eva as eva_cls
+from finetune_filter_models import train as train_filter
+from DSCF_Submit.customized_task.DSCF_models_pe_ import Hierarchical_1d_model as filter,DSCFConfig
+from cls_models import Hierarchical_1d_cls_model as cls
+from cls_ml_models import fetch_ml_model
+from dataset_ml import load_data
+from eval_cls_ml_models import eva as eva_ml_cls
+from DSCF_Submit.ComFilE_Extended.eval_cls_ml_models import eva as eva_ml_cls
 
 def robust_fold(fold):
     if not os.path.exists(fold):
@@ -30,7 +40,47 @@ def ComFilE(workspace = '../ComFilE30/',
             filter_encoder_name='SiT',
             filter_decoder_name='PPS',
             cls_encoder_name = 'ResUnet',
-            dataset_scale = 'tiny'):
+            dataset_scale = 'tiny',
+            scale = 'tiny',
+            sig_len = 512,
+            pretrain_pth='../pretrain/model_512/',
+            ):
+    logicspace = workspace+logic
+    robust_fold(workspace)
+    robust_fold(logicspace)
+    if scale == 'tiny':
+        layers = [3, 6, 8, 3]
+        d_layers = [3, 6, 8, 3]
+    elif scale == 'large':
+        layers = [5, 10, 16, 5]
+        d_layers = [3, 6, 8, 3]
+    elif scale == 'huge':
+        layers = [10, 20, 32, 10]
+        d_layers = [5, 10, 16, 5]
+    elif scale == 'ultra':
+        layers = [40, 80, 128, 40]
+        d_layers = [5, 10, 16, 5]
+    elif scale == 'ultra_pro':
+        layers = [80, 160, 256, 80]
+        d_layers = [10, 20, 30, 10]
+
+    model_args = dict(
+        inplanes=1,
+        outplanes=dict_size,
+        encoder_name=encoder_name,
+        decoder_name=decoder_name,
+        layers=layers,
+        d_layers=d_layers,
+        device=device,
+        mask=0.01,
+        patch_size=4,
+        embed_dim=64,
+        sig_len=sig_len,
+        snr = 15,
+        val_steps = 10
+    )
+    config = DSCFConfig(**model_args)
+    model_filter = filter(config)
 
     config = DSCFConfig(**model_args)
     model_filter = filter(config)
@@ -49,7 +99,7 @@ def ComFilE(workspace = '../ComFilE30/',
                      snr=35,
                      save_path=filter_model_pth,
                      dict_size=dict_size,
-                     batch_size=200,
+                     batch_size=100,
                      head_path='../ConstructedData/Training_'+str(dict_size),
                      lr=1e-5 )
 
