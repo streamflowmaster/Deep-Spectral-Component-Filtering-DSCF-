@@ -3,10 +3,15 @@ This repository contains the code for using pretrained a foundation model design
 
 # Directory notation
 **pretrain**: This folder contains the pretrained model weights and general-purpose tools for utilizing the foundation model.
+
 **customized_task**: This folder includes scripts for applying the pretrained model and finetuning it to suit your specific tasks.
+
 **preprocessing**: This folder provides scripts for preprocessing, along with source files and results for tasks such as infrared paraffin removal and SERS nanoparticle (NPs) removal.
+
 **quantify**: This folder contains scripts for quantification, accompanied by spectral data ready for quantitative analysis.
+
 **ComFilE**: This folder includes scripts and results for the Component Filtering Explanation (ComFilE) method. ComFilE can be used to rank the importance of specific spectral components (e.g., metabolites in serum) and interpret their contributions to distinguishing results (e.g., disease vs. control samples).
+
 **ComFilE_Extended**: This folder contains scripts and results for the k-order Component Filtering Explanation (where k > 1). The k-order ComFilE extends the methodology to analyze the cooperative effects of k spectral components in explaining result distinctions.
 
 # Quick start
