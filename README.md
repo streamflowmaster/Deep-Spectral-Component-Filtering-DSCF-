@@ -1,17 +1,13 @@
-Here is the code for pretraining the foundation model for spectral analysis, which is now under peer review so that the partial core source code can be uploaded to the project. 
-To remove the code barrier for the spectroscopy researchers, the codes were rewritten for quick start without using training framework but only torch. We also provided scripts for finetuning, users can follow the instructions in the script to load the data for your own tasks. 
+This repository contains the code for using pretrained a foundation model designed for spectral analysis. The project is currently under peer review, and once approved, the partial core source code will be made available here. To make this tool accessible to spectroscopy researchers, the code has been rewritten for ease of use, enabling a quick start without relying on complex training frameworks—only PyTorch is required. Additionally, we’ve included scripts for finetuning, along with clear instructions within the scripts to help users load their own data and adapt the model to their specific tasks.
 
 
 # Directory notation
-pretrain： The file fold contains general pretraining model weights and usage tools.
-
-costumized_task: The file fold contains the scripts for using the pretrain model and finetune for your costumized tasks. 
-
-Preprocessing: The file fold contains scripts for preprocessing, source files, and results of infrared paraffin removal and SERS NPs removal.
-
-quantify: The file fold contains scripts for quantification and spectral data to be quantified.
-
-ComFilE: The file fold contains scripts and results for the Component Filtering Explanation. 
+**pretrain**: This folder contains the pretrained model weights and general-purpose tools for utilizing the foundation model.
+**customized_task**: This folder includes scripts for applying the pretrained model and finetuning it to suit your specific tasks.
+**preprocessing**: This folder provides scripts for preprocessing, along with source files and results for tasks such as infrared paraffin removal and SERS nanoparticle (NPs) removal.
+**quantify**: This folder contains scripts for quantification, accompanied by spectral data ready for quantitative analysis.
+**ComFilE**: This folder includes scripts and results for the Component Filtering Explanation (ComFilE) method. ComFilE can be used to rank the importance of specific spectral components (e.g., metabolites in serum) and interpret their contributions to distinguishing results (e.g., disease vs. control samples).
+**ComFilE_Extended**: This folder contains scripts and results for the k-order Component Filtering Explanation (where k > 1). The k-order ComFilE extends the methodology to analyze the cooperative effects of k spectral components in explaining result distinctions.
 
 # Quick start
 The scripts to build DSCF for your personalized work are in the directory "costumized_task". 
