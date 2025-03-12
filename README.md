@@ -1,5 +1,4 @@
-This repository contains the code for using pretrained a foundation model designed for spectral analysis. The project is currently under producing, and once approved, the partial core source code will be made available here. To make this tool accessible to spectroscopy researchers, the code has been rewritten for ease of use, enabling a quick start without relying on complex training frameworks—only PyTorch is required. Additionally, we’ve included scripts for finetuning, along with clear instructions within the scripts to help users load their own data and adapt the model to their specific tasks.
-
+This repository contains code for using a pretrained foundation model designed for spectral analysis. To ensure accessibility for spectroscopy researchers, the code is designed with ease of use in mind, enabling a quick start without the need for complex training frameworks or extensive environment setup—only PyTorch is required. Additionally, we’ve included scripts for fine-tuning, along with clear instructions within them to help users load their own data and adapt the model to their specific tasks.
 
 # Directory notation
 **pretrain**: This folder contains the pretrained model weights and general-purpose tools for utilizing the foundation model.
